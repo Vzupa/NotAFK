@@ -5,12 +5,12 @@ import time
 import random
 import pyautogui
 from utils import save_data
+from file_paths import afk_csv
 
 
 class AutoClicker:
-    def __init__(self, frame, csv_file, instance_id):
+    def __init__(self, frame, instance_id):
         self.frame = frame
-        self.csv_file = csv_file
         self.instance_id = instance_id
         self.click_count = 0
         self.running = False
@@ -68,7 +68,7 @@ class AutoClicker:
             self.status_label.config(text="Status: Stopped")
             self.total_running_time += time.time() - self.start_time if self.start_time else 0
             self.start_time = None
-            save_data(self.csv_file, self.instance_id, self.total_running_time, self.click_count)
+            save_data(afk_csv, self.instance_id, self.total_running_time, self.click_count)
 
     def run(self):
         """Simulate clicks at random intervals."""
@@ -88,4 +88,4 @@ class AutoClicker:
         """Increment click count and save data."""
         self.click_count += 1
         self.click_count_label.config(text=f"Click Count: {self.click_count}")
-        save_data(self.csv_file, self.instance_id, self.total_running_time, self.click_count)
+        save_data(afk_csv, self.instance_id, self.total_running_time, self.click_count)

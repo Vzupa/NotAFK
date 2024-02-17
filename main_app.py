@@ -32,9 +32,9 @@ class ClickApp:
         tab_control.add(self.tab3, text='Summary')
         tab_control.pack(expand=1, fill="both")
 
-        AutoClicker(self.tab1, self.csv_file, self.instance_id)
+        AutoClicker(self.tab1, self.instance_id)
         Timer(self.tab2)
-        Summarizer(self.tab3, self.csv_file)
+        Summarizer(self.tab3)
 
 
 if __name__ == "__main__":

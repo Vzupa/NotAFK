@@ -1,12 +1,11 @@
 from tkinter import ttk
 import csv
-from file_paths import timer_csv
+from file_paths import timer_csv, afk_csv
 
 
 class Summarizer:
-    def __init__(self, frame, csv_file):
+    def __init__(self, frame):
         self.frame = frame
-        self.csv_file = csv_file
         self.setup_tab()
 
     def setup_tab(self):
@@ -48,16 +47,17 @@ class Summarizer:
     def process_AFK_data(self):
         """Process the data for summary."""
         data = {}
-        with open(self.csv_file, mode='r', newline='') as file:
+        with open(afk_csv, mode='r', newline='') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 id = row['ID']
                 seconds = int(row['Seconds Running'])
                 clicks = int(row['Click Count'])
+                date = row['Date']
                 if id not in data or data[id]['Seconds Running'] < seconds:
-                    data[id] = {'Seconds Running': seconds, 'Click Count': clicks}
+                    data[id] = {'Date': date, 'Seconds Running': seconds, 'Click Count': clicks}
 
-        with open(self.csv_file, mode='w', newline='') as file:
+        with open(afk_csv, mode='w', newline='') as file:
             fieldnames = ['ID', 'Date', 'Seconds Running', 'Click Count']
             writer = csv.DictWriter(file, fieldnames=fieldnames)
             writer.writeheader()
