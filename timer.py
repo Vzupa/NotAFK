@@ -6,7 +6,7 @@ from file_paths import timer_csv
 
 
 class Timer:
-    def __init__(self, master, csv_file=None, instance_id=None):
+    def __init__(self, master):
         self.first_beep = True
         self.values = {}
         self.scales = []
@@ -31,6 +31,7 @@ class Timer:
         self.time_left = 300
 
     def setup_gap_settings(self):
+
         timer_settings = [
             ("Minimum Interval", 5 * 60, 19 * 60, 30, 5 * 60, "minutes"),
             ("Duration", 5, 15, 1, 10, "seconds"),
@@ -47,7 +48,7 @@ class Timer:
 
             scale = ttk.Scale(frame, from_=from_val, to_=to_val, orient=tk.HORIZONTAL,
                               command=lambda value, lbl=timer_label, lt=label_text, stp=step, unt=unit:
-                              self.update_timer_scale(value, lbl, lt, stp, unt))
+                              self.update_timer(value, lbl, lt, stp, unt))
             scale.set(initial_val)
             scale.pack()
             frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
@@ -55,22 +56,22 @@ class Timer:
             self.scales.append(scale)
             self.values[label_text] = initial_val
 
-    def update_timer_scale(self, value, timer_label, label_text, step, unit):
-        rounded_value = round(float(value) / step) * step
-        self.values[label_text] = rounded_value
-        formatted_time = format_time(rounded_value, unit)
-        timer_label.config(text=formatted_time)
+    def update_timer(self, value, timer_label=None, label_text=None, step=None, unit=None):
+        if label_text:
+            rounded_value = round(float(value) / step) * step
+            self.values[label_text] = rounded_value
+            formatted_time = format_time(rounded_value, unit)
+            timer_label.config(text=formatted_time)
+        else:
+            nearest_five = round(float(value) / 5) * 5
+            self.time_left = int(nearest_five * 60)
+            self.initial_time_left = int(nearest_five * 60)
 
-    def update_timer(self, value):
-        nearest_five = round(float(value) / 5) * 5
-        self.time_left = int(nearest_five * 60)
-        self.initial_time = int(nearest_five * 60)
+            current_scale_value = round(self.scale.get() / 5) * 5
+            if current_scale_value != nearest_five:
+                self.scale.set(nearest_five)
 
-        current_scale_value = round(self.scale.get() / 5) * 5
-        if current_scale_value != nearest_five:
-            self.scale.set(nearest_five)
-
-        self.timer_label.config(text=f"{int(self.time_left / 60):02d}:{self.time_left % 60:02d}")
+            self.timer_label.config(text=f"{int(self.time_left / 60):02d}:{self.time_left % 60:02d}")
 
     def toggle_timer(self):
         if self.timer_running:
