@@ -1,7 +1,8 @@
 import tkinter as tk
 import random
 from tkinter import ttk
-from utils import beep, format_time
+from utils import beep, format_time, save_data
+from file_paths import timer_csv
 
 
 class Timer:
@@ -93,6 +94,8 @@ class Timer:
         self.scale.config(state=tk.NORMAL)
         for scale in self.scales:
             scale.config(state=tk.NORMAL)
+
+        save_data(timer_csv, None, self.initial_time - self.time_left, self.initial_time)
         self.scale.set(self.initial_time / 60)
         self.time_left = self.initial_time
 

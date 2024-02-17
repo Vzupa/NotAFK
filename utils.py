@@ -6,21 +6,25 @@ from datetime import datetime
 import winsound
 
 
-def check_csv_file(csv_file):
+def check_csv_file(csv_file, values):
     """Check and create the CSV file if it does not exist."""
     if not os.path.exists(csv_file):
         with open(csv_file, mode='w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow(['ID', 'Date', 'Seconds Running', 'Click Count'])
+            writer.writerow(values)
 
 
 def save_data(csv_file, instance_id, total_running_time, click_count):
     """Save the current data to the CSV file."""
     current_date = datetime.now().strftime('%Y-%m-%d')
-
-    with open(csv_file, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([instance_id, current_date, int(total_running_time), click_count])
+    if instance_id is not None:
+        with open(csv_file, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([instance_id, current_date, int(total_running_time), click_count])
+    else:
+        with open(csv_file, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([current_date, int(total_running_time), click_count])
 
 
 def beep(frequency=440, duration=1000):

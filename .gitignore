@@ -5,6 +5,7 @@ __pycache__/
 
 .idea/
 data.csv
+timer.csv
 file_paths.py
 # C extensions
 *.so
