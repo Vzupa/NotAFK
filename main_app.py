@@ -5,11 +5,12 @@ from autoclicker import AutoClicker
 from summarizer import Summarizer
 from timer import Timer
 from utils import check_csv_file
+from file_paths import data_csv
 
 
 class ClickApp:
     def __init__(self, root):
-        self.csv_file = r'C:\Users\Vitomir\PycharmProjects\NotAFK\data.csv'
+        self.csv_file = data_csv
         check_csv_file(self.csv_file)
         self.instance_id = str(uuid.uuid4())
         self.root = root

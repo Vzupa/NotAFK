@@ -38,7 +38,7 @@ class Summarizer:
                     data[id] = {'Seconds Running': seconds, 'Click Count': clicks}
 
         with open(self.csv_file, mode='w', newline='') as file:
-            fieldnames = ['ID', 'Seconds Running', 'Click Count']
+            fieldnames = ['ID', 'Date', 'Seconds Running', 'Click Count']
             writer = csv.DictWriter(file, fieldnames=fieldnames)
             writer.writeheader()
             for id, values in data.items():
