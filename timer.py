@@ -1,9 +1,12 @@
 import tkinter as tk
+import random
 from tkinter import ttk
+from utils import beep, format_time
 
 
 class Timer:
     def __init__(self, master, csv_file=None, instance_id=None):
+        self.first_beep = True
         self.values = {}
         self.scales = []
         self.initial_time = 5 * 60
@@ -37,7 +40,7 @@ class Timer:
             frame = ttk.Frame(self.master)
             ttk.Label(frame, text=label_text).pack()
 
-            initial_text = self.format_time(initial_val, unit)
+            initial_text = format_time(initial_val, unit)
             timer_label = ttk.Label(frame, text=initial_text, font=("Helvetica", 12))
             timer_label.pack(pady=10)
 
@@ -54,18 +57,8 @@ class Timer:
     def update_timer_scale(self, value, timer_label, label_text, step, unit):
         rounded_value = round(float(value) / step) * step
         self.values[label_text] = rounded_value
-        formatted_time = self.format_time(rounded_value, unit)
+        formatted_time = format_time(rounded_value, unit)
         timer_label.config(text=formatted_time)
-
-    def format_time(self, value, unit):
-        if unit == "minutes":
-            minutes = int(value) // 60
-            seconds = int(value) % 60
-            return f"{minutes}:{seconds:02d}"
-        elif unit == "seconds":
-            return f"{int(value)}s"
-        else:
-            return f"{value} {unit}"
 
     def update_timer(self, value):
         nearest_five = round(float(value) / 5) * 5
@@ -91,6 +84,7 @@ class Timer:
         self.scale.config(state=tk.DISABLED)
         for scale in self.scales:
             scale.config(state=tk.DISABLED)
+        self.calculate_next_beep()
         self.countdown()
 
     def stop_timer(self):
@@ -99,7 +93,6 @@ class Timer:
         self.scale.config(state=tk.NORMAL)
         for scale in self.scales:
             scale.config(state=tk.NORMAL)
-        print(self.initial_time)
         self.scale.set(self.initial_time / 60)
         self.time_left = self.initial_time
 
@@ -107,9 +100,23 @@ class Timer:
         if self.timer_running and self.time_left > 0:
             self.time_left -= 1
             self.timer_label.config(text=f"{int(self.time_left / 60):02d}:{self.time_left % 60:02d}")
+            if self.time_left == self.next_beep_time:
+                beep(1000, 400)
+                self.calculate_next_beep()
             self.master.after(1000, self.countdown)
         else:
             self.stop_timer()
+
+    def calculate_next_beep(self):
+        if self.timer_running and self.first_beep:
+            min_interval = self.values.get("Minimum Interval", 60)
+            max_interval = self.values.get("Maximum Interval", 120)
+            beep_interval = random.randint(min_interval, max_interval)
+            self.next_beep_time = max(0, self.time_left - beep_interval)
+            self.first_beep = False
+        elif self.timer_running and not self.first_beep:
+            self.next_beep_time = self.time_left - self.values["Duration"]
+            self.first_beep = True
 
     def validate_and_adjust_intervals(self):
         min_value = self.values.get("Minimum Interval", 0)

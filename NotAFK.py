@@ -87,7 +87,7 @@ class ClickApp:
 
     def check_csv_file(self):
         """Check and create the CSV file if it does not exist."""
-        self.csv_file = r'C:\Users\vzupanic\Desktop\NotAFK\data.csv'
+        self.csv_file = r'C:\Users\Vitomir\PycharmProjects\NotAFK\data.csv'
         if not os.path.exists(self.csv_file):
             with open(self.csv_file, mode='w', newline='') as file:
                 writer = csv.writer(file)
